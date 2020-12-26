@@ -2,13 +2,14 @@ from typing import List, Any, Coroutine
 
 import discord
 import random
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
 client = discord.Client()
 
-TOKEN =
 
 HangLives = 3
-
 
 
 @client.event
@@ -37,7 +38,7 @@ async def on_message(message):
         if ans == "hangman":
             await hangman(message)
         elif ans == "number":
-            #await numbers(message)
+            # await numbers(message)
             await message.channel.send("I SAID UNDER CONSTRUCTION")
         else:
             await message.channel.send("invalid response you idiot")
@@ -130,4 +131,4 @@ async def getGuess(message, guessed):
     return guess.lower()
 
 
-client.run(TOKEN)
+client.run(os.getenv("TOKEN"))
