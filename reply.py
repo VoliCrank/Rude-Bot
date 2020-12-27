@@ -5,10 +5,8 @@ import random
 import os
 from dotenv import load_dotenv
 
-
 load_dotenv()
 client = discord.Client()
-
 
 HangLives = 3
 
@@ -39,8 +37,7 @@ async def on_message(message):
         if ans == "hangman":
             await hangman(message)
         elif ans == "number":
-            # await numbers(message)
-            await message.channel.send("I SAID UNDER CONSTRUCTION")
+            await numbers(message)
         else:
             await message.channel.send("invalid response you idiot")
 
@@ -51,21 +48,32 @@ async def numbers(message):
     answer = random.randint(start, finish)
     await message.channel.send(f"I have thought of a random number between {start} and {finish}")
     guess = await (getNumGuess(message, start, finish))
+    count = 1
     while guess != answer:
-        if answer < guess < finish:
+
+        if guess == finish:
+            finish -= 1
+        elif guess == start:
+            start += 1
+        elif answer < guess < finish:
             finish = guess
         elif start < guess < answer:
             start = guess
-        await message.channel.send(f"The number is between {start} and {finish}, keep guessing!")
+        await message.channel.send(f"All right! The number is now between {start} and {finish}.\n"
+                                   f"You have guessed {count} times so far.")
         guess = await getNumGuess(message, start, finish)
-    await message.channel.send(f"Correct! The number is {answer}")
+        count += 1
+    await message.channel.send(f"Correct! The number is {answer} you got it in {count} guesses!")
 
 
 async def getNumGuess(message, start, finish):
     response = await client.wait_for('message', check=lambda m: m.author == message.author)
-    num = int(response.content)
-
-    return 0
+    num = response.content
+    while not num.isnumeric() or int(num) < start or int(num) > finish:
+        await message.channel.send(f"Invalid response, please guess a number between {start} and {finish}")
+        response = await client.wait_for('message', check=lambda m: m.author == message.author)
+        num = response.content
+    return int(num)
 
 
 async def hangman(message):
