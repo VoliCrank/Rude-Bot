@@ -10,12 +10,13 @@ client = discord.Client()
 HangLives = 3
 lines = []
 
+
 @client.event
 async def on_ready():
     print(f'{client.user} has connected')
     with open("words_alpha.txt") as f:
-      lines = f.readlines()
-
+        global lines
+        lines = f.readlines()
 
 
 @client.event
